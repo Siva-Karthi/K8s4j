@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: k8s4j-jib
+  template:
+    metadata:
+      labels:
+        app: k8s4j-jib
+    spec:
+      containers:
+        - name: k8s4j-jib-pod
+          image: k8s4j
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 55000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: k8s4j-jib-service
+spec:
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 55000
+  selector:
+    app: k8s4j-jib
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: k8s4j-jib-ingress
+  annotations:
+spec:
+  rules:
+    - host: kube.local
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: k8s4j-jib-service
+              servicePort: 55000
