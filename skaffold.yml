@@ -1,0 +1,17 @@
+apiVersion: skaffold/v2alpha3
+kind: Config
+build:
+  local:
+    push: false
+  artifacts:
+    - image: k8s4j
+      jib: {}
+deploy:
+  helm:
+    releases:
+      - name: K8s4j-jib
+        chartPath: helm
+        values:
+          image.repository: com.K8s4j.demo/K8s4j-jib
+        setValues:
+          image.tag: ""
